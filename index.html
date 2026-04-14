@@ -257,14 +257,6 @@
     .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
     .field select option { background: #111; color: #fff; }
     .field textarea { resize: vertical; min-height: 90px; }
-    <form action="https://formspree.io/f/xbdqjvqr" method="POST">
-  <input type="email" name="email" required />
-  <textarea name="message" required></textarea>
-  <button type="submit">Send</button>
-<form action="https://formspree.io/f/xbdqjvqr" method="POST">
-  <input type="email" name="email" required />
-  <textarea name="message" required></textarea>
-  <button type="submit">Send</button>
     .form-footer { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-top: 20px; }
     .form-note { font-size: 10px; color: #aaaaaa; line-height: 1.7; max-width: 240px; }
     .form-note a { color: var(--accent); text-decoration: none; }
@@ -273,7 +265,6 @@
       display: none; margin-top: 16px; padding: 16px 20px;
       border: 1px solid var(--accent); background: rgba(200,255,0,0.06);
       color: var(--accent); font-size: 11px; letter-spacing: 0.1em;
-      </form>
     }
 
     /* SOCIAL + FOOTER */
@@ -532,7 +523,7 @@
       </div>
       <div class="form-footer">
         <button type="submit" class="btn-primary" style="background:#C8FF00;color:#000;">Send Inquiry</button>
-        <p class="form-note">Or email directly:<br><a href="mailto:prodbyprofit@gmail.com">prodbyprofit@gmail.com</a></p>
+        <p class="form-note">Or email directly:<br><a href="/cdn-cgi/l/email-protection#1161637e75736861637e77786551767c70787d3f727e7c"><span class="__cf_email__" data-cfemail="f686849992948f868499909f82b6919b979f9ad895999b">[email&#160;protected]</span></a></p>
       </div>
     </form>
     <div class="success-msg" id="successMsg">✓ &nbsp; Message sent. I'll be in touch shortly.</div>
@@ -555,30 +546,53 @@
 <!-- FOOTER -->
 <footer>
   <span class="footer-name">DAW PROFIT</span>
-  <a href="mailto:prodbyprofit@gmail.com" class="footer-email">prodbyprofit@gmail.com</a>
+  <a href="/cdn-cgi/l/email-protection#58282a373c3a21282a373e312c183f35393134763b3735" class="footer-email"><span class="__cf_email__" data-cfemail="dbaba9b4bfb9a2aba9b4bdb2af9bbcb6bab2b7f5b8b4b6">[email&#160;protected]</span></a>
   <span class="footer-copy">Chicago, IL &nbsp;·&nbsp; All beats self-produced</span>
 </footer>
 
 <script>
+  // Scroll reveal
   const obs = new IntersectionObserver(
     entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("in"); }),
     { threshold: 0.1 }
   );
   document.querySelectorAll(".reveal").forEach(el => obs.observe(el));
 
-  function handleSubmit(e) {
+  // Booking form — Formspree
+  async function handleSubmit(e) {
     e.preventDefault();
-    const fd = new FormData(e.target);
-    const name    = fd.get("name")    || "";
-    const type    = fd.get("type")    || "";
-    const date    = fd.get("date")    || "TBD";
-    const venue   = fd.get("venue")   || "";
-    const message = fd.get("message") || "";
-    const subject = encodeURIComponent("Booking Inquiry — " + type + " — " + name);
-    const body    = encodeURIComponent("Name: " + name + "\nBooking Type: " + type + "\nDate: " + date + "\nVenue: " + venue + "\n\nMessage:\n" + message);
-    window.location.href = "mailto:prodbyprofit@gmail.com?subject=" + subject + "&body=" + body;
-    document.getElementById("successMsg").style.display = "block";
-    e.target.reset();
+    const form = e.target;
+    const btn  = form.querySelector("button[type=submit]");
+    const successMsg = document.getElementById("successMsg");
+
+    btn.disabled = true;
+    btn.textContent = "Sending…";
+
+    try {
+      const res = await fetch("https://formspree.io/f/YOUR_FORM_ID", {
+        method: "POST",
+        body: new FormData(form),
+        headers: { "Accept": "application/json" }
+      });
+
+      if (res.ok) {
+        form.reset();
+        form.style.display = "none";
+        successMsg.style.display = "block";
+      } else {
+        const data = await res.json();
+        const errMsg = data.errors
+          ? data.errors.map(err => err.message).join(", ")
+          : "Something went wrong. Please email directly.";
+        alert("Error: " + errMsg);
+        btn.disabled = false;
+        btn.textContent = "Send Inquiry";
+      }
+    } catch (err) {
+      alert("Network error — please email directly.");
+      btn.disabled = false;
+      btn.textContent = "Send Inquiry";
+    }
   }
 </script>
 </body>
