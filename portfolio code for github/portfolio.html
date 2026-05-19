@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daniel Andrew Ward — AV Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0c0c0e;--surface:#141417;--border:#2a2a30;--accent:#e8c97a;--accent2:#7ab8e8;--text:#f0ede8;--muted:#8a8890;--card-bg:#18181c}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden}
+    header{position:relative;z-index:10;border-bottom:1px solid var(--border);padding:0 3rem;display:flex;align-items:center;justify-content:space-between;height:72px}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.12em;color:var(--accent)}
+    nav{display:flex;gap:2rem}
+    nav a{font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.2s}
+    nav a:hover{color:var(--text)}
+    .hero{position:relative;z-index:2;padding:7rem 3rem 5rem;max-width:1200px;margin:0 auto}
+    .hero-eyebrow{font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent2);margin-bottom:1.2rem}
+    .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,9vw,8rem);line-height:0.92;letter-spacing:0.02em;color:var(--text);margin-bottom:1.6rem}
+    .hero h1 span{color:var(--accent)}
+    .hero-sub{max-width:520px;font-size:1rem;color:var(--muted);line-height:1.75}
+    .hero-rule{width:60px;height:2px;background:var(--accent);margin:2.4rem 0}
+    .hero-tags{display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:2rem}
+    .tag{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--border);color:var(--muted);padding:0.35rem 0.8rem;border-radius:2px}
+    .categories-wrapper{position:relative;z-index:2;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow-x:auto}
+    .categories-nav{display:flex;max-width:1200px;margin:0 auto;padding:0 3rem}
+    .cat-btn{font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;padding:1.1rem 1.4rem;cursor:pointer;transition:color 0.2s,border-color 0.2s;white-space:nowrap}
+    .cat-btn:hover{color:var(--text)}
+    .cat-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .portfolio{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:5rem 3rem}
+    .category-section{display:none}
+    .category-section.active{display:block}
+    .category-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+    .section-label{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem}
+    .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,4vw,3.5rem);letter-spacing:0.04em;line-height:1;color:var(--text);margin-bottom:0.5rem}
+    .category-desc{font-size:0.9rem;color:var(--muted);max-width:460px;line-height:1.65}
+    .photo-count{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;white-space:nowrap;padding-left:2rem}
+    .photo-grid{columns:3;column-gap:1rem}
+    @media(max-width:900px){.photo-grid{columns:2}}
+    @media(max-width:560px){.photo-grid{columns:1}}
+    .photo-item{break-inside:avoid;margin-bottom:1rem;position:relative;overflow:hidden;background:var(--card-bg);border:1px solid var(--border);cursor:zoom-in}
+    .photo-item img{display:block;width:100%;height:auto;transition:transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)}
+    .photo-item:hover img{transform:scale(1.04)}
+    .photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 50%);opacity:0;transition:opacity 0.3s;display:flex;align-items:flex-end;padding:1rem}
+    .photo-item:hover .photo-overlay{opacity:1}
+    .photo-caption{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.8)}
+    .loading-state{padding:4rem 2rem;text-align:center;font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+    .loading-dot{display:inline-block;animation:blink 1s infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+    .lightbox{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;cursor:zoom-out}
+    .lightbox.open{display:flex}
+    .lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border:1px solid var(--border)}
+    .lightbox-close{position:absolute;top:1.5rem;right:1.5rem;font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:0.4rem 0.8rem;cursor:pointer}
+    .lightbox-close:hover{color:var(--text);border-color:var(--text)}
+    footer{position:relative;z-index:2;border-top:1px solid var(--border);padding:3rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+    .footer-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.1em;color:var(--accent)}
+    .footer-copy{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase}
+    @media(max-width:700px){header{padding:0 1.5rem}nav{display:none}.hero{padding:4rem 1.5rem 3rem}.portfolio{padding:3rem 1.5rem}.categories-nav{padding:0 1.5rem}footer{padding:2rem 1.5rem}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">DAW · Portfolio</div>
+  <nav>
+    <a href="#portfolio">Work</a>
+    <a href="https://danielandrewward.github.io" target="_blank">Home</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Audio / Visual · Chicago, IL</div>
+  <h1>DANIEL<br>ANDREW <span>WARD</span></h1>
+  <div class="hero-rule"></div>
+  <p class="hero-sub">AV technician and live sound engineer with experience across corporate events, live music, houses of worship, weddings, and beyond. Dante Level 3 certified. Every cable pulled, every console dialed — documented here.</p>
+  <div class="hero-tags">
+    <span class="tag">Dante Level 3</span>
+    <span class="tag">A1 Live Events</span>
+    <span class="tag">Quest · Ace · TDF · Vantage</span>
+    <span class="tag">Chicago, IL</span>
+  </div>
+</section>
+
+<div class="categories-wrapper" id="portfolio">
+  <div class="categories-nav">
+    <button class="cat-btn active" onclick="showCategory('weddings',this)">Weddings</button>
+    <button class="cat-btn" onclick="showCategory('celebrations',this)">Celebrations</button>
+    <button class="cat-btn" onclick="showCategory('corporate',this)">Corporate</button>
+    <button class="cat-btn" onclick="showCategory('live-music',this)">Live Music</button>
+    <button class="cat-btn" onclick="showCategory('house-of-worship',this)">House of Worship</button>
+    <button class="cat-btn" onclick="showCategory('studio',this)">Studio</button>
+    <button class="cat-btn" onclick="showCategory('load-in',this)">Load In / Load Out</button>
+  </div>
+</div>
+
+<div class="portfolio">
+
+  <div class="category-section active" id="cat-weddings">
+    <div class="category-header">
+      <div><div class="section-label">Category 01</div><div class="section-title">Weddings</div>
+      <p class="category-desc">Sound and AV for ceremonies and receptions — from intimate vows to full reception productions with wireless systems, uplighting, and DJ setups.</p></div>
+      <div class="photo-count" id="count-weddings">14 photos</div>
+    </div>
+    <div class="photo-grid" id="grid-weddings"><div class="loading-state">Loading<span class="loading-dot">...</span></div></div>
+  </div>
+
+  <div class="category-section" id="cat-celebrations">
+    <div class="category-header">
+      <div><div class="section-label">Category 02</div><div class="section-title">Celebrations</div>
+      <p class="category-desc">Birthdays, quinceañeras, galas, and private events — custom AV setups that match the mood and scale of every celebration.</p></div>
+      <div class="photo-count" id="count-celebrations">7 photos</div>
+    </div>
+    <div class="photo-grid" id="grid-celebrations"><div class="loading-state">Loading<span class="loading-dot">...</span></div></div>
+  </div>
+
+  <div class="category-section" id="cat-corporate">
+    <div class="category-header">
+      <div><div class="section-label">Category 03</div><div class="section-title">Corporate Events</div>
+      <p class="category-desc">Conferences, product launches, trade shows, and general sessions — professional AV execution at any scale.</p></div>
+      <div class="photo-count" id="count-corporate">12 photos</div>
+    </div>
+    <div class="photo-grid" id="grid-corporate"><div class="loading-state">Loading<span class="loading-dot">...</span></div></div>
+  </div>
+
+  <div class="category-section" id="cat-live-music">
+    <div class="category-header">
+      <div><div class="section-label">Category 04</div><div class="section-title">Live Music</div>
+      <p class="category-desc">Concert production, festival stages, venue installs, and touring support — mixing and system tech for live performances of every genre.</p></div>
+      <div class="photo-count" id="count-live-music">7 photos</div>
+    </div>
+    <div class="photo-grid" id="grid-live-music"><div class="loading-state">Loading<span class="loading-dot">...</span></div></div>
+  </div>
+
+  <div class="category-section" id="cat-house-of-worship">
+    <div class="category-header">
+      <div><div class="section-label">Category 05</div><div class="section-title">House of Worship</div>
+      <p class="category-desc">Sunday services, special programs, and large-scale worship events — audio, video, and lighting solutions for faith communities.</p></div>
+      <div class="photo-count" id="count-house-of-worship">11 photos</div>
+    </div>
+    <div class="photo-grid" id="grid-house-of-worship"><div class="loading-state">Loading<span class="loading-dot">...</span></div></div>
+  </div>
+
+  <div class="category-section" id="cat-studio">
+    <div class="category-header">
+      <div><div class="section-label">Category 06</div><div class="section-title">Studio</div>
+      <p class="category-desc">Recording sessions, home studio builds, and production setups — the behind-the-scenes technical work that makes records happen.</p></div>
+      <div class="photo-count" id="count-studio">12 photos</div>
+    </div>
+    <div class="photo-grid" id="grid-studio"><div class="loading-state">Loading<span class="loading-dot">...</span></div></div>
+  </div>
+
+  <div class="category-section" id="cat-load-in">
+    <div class="category-header">
+      <div><div class="section-label">Category 07</div><div class="section-title">Load In / Load Out</div>
+      <p class="category-desc">The work before and after the show — rigging, cable runs, rack builds, and strike. This is where experience and efficiency show.</p></div>
+      <div class="photo-count" id="count-load-in">12 photos</div>
+    </div>
+    <div class="photo-grid" id="grid-load-in"><div class="loading-state">Loading<span class="loading-dot">...</span></div></div>
+  </div>
+
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">Close ✕</button>
+  <img id="lightbox-img" src="" alt=""/>
+</div>
+
+<footer>
+  <div class="footer-name">Daniel Andrew Ward</div>
+  <div class="footer-copy">AV Technician · Chicago, IL · © 2026</div>
+</footer>
+
+<script>
+// Map category IDs to their data file
+var dataFiles = {
+  'weddings':        'photos_weddings.js',
+  'celebrations':    'photos_celebrations.js',
+  'corporate':       'photos_corporate.js',
+  'live-music':      'photos_live_music.js',
+  'house-of-worship':'photos_house_of_worship.js',
+  'studio':          'photos_studio.js',
+  'load-in':         'photos_load_in.js'
+};
+
+var loaded = {};
+
+function renderPhotos(catId) {
+  if (loaded[catId]) return;
+  loaded[catId] = true;
+  var photos = (window.__photos__ || {})[catId] || [];
+  var grid = document.getElementById('grid-' + catId);
+  grid.innerHTML = '';
+  photos.forEach(function(p) {
+    var item = document.createElement('div');
+    item.className = 'photo-item';
+    var img = document.createElement('img');
+    img.src = p.src;
+    img.alt = p.caption || '';
+    img.loading = 'lazy';
+    img.onclick = function() { openLightbox(p.src); };
+    var overlay = document.createElement('div');
+    overlay.className = 'photo-overlay';
+    var cap = document.createElement('span');
+    cap.className = 'photo-caption';
+    cap.textContent = p.caption || '';
+    overlay.appendChild(cap);
+    item.appendChild(img);
+    item.appendChild(overlay);
+    grid.appendChild(item);
+  });
+}
+
+function loadCategory(catId, callback) {
+  if ((window.__photos__ || {})[catId]) { callback(); return; }
+  var file = dataFiles[catId];
+  if (!file) { callback(); return; }
+  var s = document.createElement('script');
+  s.src = file;
+  s.onload = callback;
+  s.onerror = function() { console.warn('Could not load', file); callback(); };
+  document.head.appendChild(s);
+}
+
+function showCategory(id, btn) {
+  document.querySelectorAll('.category-section').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.cat-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('cat-' + id).classList.add('active');
+  btn.classList.add('active');
+  loadCategory(id, function() { renderPhotos(id); });
+}
+
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLightbox(); });
+
+// Load weddings on page start
+loadCategory('weddings', function() { renderPhotos('weddings'); });
+</script>
+
+</body>
+</html>
